@@ -1,10 +1,13 @@
 package com.julian.curso.springboot.error.springboot_error.controllers;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -38,5 +41,18 @@ public class HandlerExceptionController {
         error.setStatus(HttpStatus.NOT_FOUND.value());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(error);
+    }
+
+    @ExceptionHandler(NumberFormatException.class) // Captura error conversion de numero
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String,String> numberFormat(NumberFormatException ex){
+
+        Map<String,String> error = new HashMap<>();
+        error.put("date", new Date().toString());
+        error.put("error", "Numero invalido, no tiene formato correcto!");
+        error.put("message", ex.getMessage());
+        error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value()+""); //Forma de convertir int a String
+    
+        return error;
     }
 }
